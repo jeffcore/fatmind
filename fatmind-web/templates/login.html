@@ -1,0 +1,20 @@
+<div id="form-container" style="">
+    <div class="form-error" ng-show="errorMessage">
+        {{ errorMessage }}
+    </div>
+
+    <div class="form-input">
+        <input type="text" class="text-basic width225 form-style" placeholder="email" ng-model="user.email"/>
+    </div>
+
+    <div class="form-input" >
+        <input type="password" class="text-basic width225 form-style" placeholder="password" ng-model="user.password"/>
+    </div>
+
+    <div class="" style="width:100%;padding-top:20px;">
+        <button class="acceptButton width245" type="button" name="button" ng-click="l.postLogin()">Login</button>
+    </div>
+    <div class="form-input">
+          <a ui-sref="fatmind.register">Register</a>
+    </div>
+</div>

@@ -1,0 +1,5 @@
+/fatmind-data/*
+/fatmind-dataexport/*
+.DS_Store
+npm-debug.log
+ 

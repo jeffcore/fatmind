@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+
+  #Database
+  database:
+    image: mongo
+    container_name: fatmind-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./fatmind-data:/data/db
+
+  fatmind-api:
+    build:
+      context: ./fatmind-api
+      dockerfile: api.dockerfile
+    container_name: fatmind-api
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./fatmind-api:/src
+      - /src/node_modules
+
+  fatmind-web:
+    build:
+        context: ./fatmind-web
+        dockerfile: web.dockerfile
+    container_name: fatmind-web
+    ports:
+      - "8090:8090"
+    volumes:
+      - ./fatmind-web/:/src/
+      - /src/node_modules/
