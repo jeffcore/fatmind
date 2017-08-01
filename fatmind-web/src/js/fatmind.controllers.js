@@ -181,6 +181,5 @@ angular.module('fatmind.controllers', ['restangular', 'ngDialog'])
                 });
             };
 
-          //  $state.go('fatmind.home');
         }
 ]);

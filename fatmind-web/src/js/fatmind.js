@@ -85,19 +85,6 @@ angular.module('fatmind', [
 
         console.log($rootScope.user.token + ' token');
 
-    //    if (!$rootScope.user.token || $rootScope.user.token == undefined || $rootScope.user.token == 'undefined') {
-        //    console.log("got here no token");
-
-        //    $timeout(function() {
-        //           $state.go('fatmind.login');
-        //       });
-
-    //    } else {
-    //        console.log("got here  token");
-    //        headers = Restangular.defaultHeaders;
-    //        headers['x-access-token'] = $rootScope.user.token;
-    //    }
-
         $rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
             var requireLogin = toState.data.requireLogin;
             console.log(requireLogin + "requirelogin");
@@ -114,16 +101,6 @@ angular.module('fatmind', [
             }
 
         });
-
-
-
-        //$rootScope.$emit('unauthorized', {});
-    //    $rootScope.$on('unauthorized', function(ev, data){
-    //        console.log("unauthorized error!");
-    //        delete $window.localStorage['token'];
-    //        $rootScope.user = { username: undefined };
-    //        $state.go('fatmind.login');
-    //    });
 
     }
 ]);
