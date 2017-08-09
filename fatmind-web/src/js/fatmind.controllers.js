@@ -7,9 +7,16 @@ angular.module('fatmind.controllers', ['restangular', 'ngDialog'])
         $scope.quantumSelected = {note: '', dateCreated: ''};
         $scope.quanta;
         $scope.user = $rootScope.user;
+
         Restangular.all('quantum').customGET().then(function(response) {
             $scope.quanta = response.data;
-            console.log($scope.quanta);
+        },
+        function(error){
+            //  $scope.login_error = 'The username or password was incorrect.';
+            console.log(error);
+            $rootScope.user.token = undefined;
+            $rootScope.user.username = undefined;
+            $state.go('fatmind.login'); 
         });
 
         this.postQuantum = function(){
@@ -38,6 +45,13 @@ angular.module('fatmind.controllers', ['restangular', 'ngDialog'])
                 $scope.quanta = [];
               //  $scope.quanta = response.data.hits.hits;
                 $scope.quanta = response.data;
+            },
+            function(error){
+                //  $scope.login_error = 'The username or password was incorrect.';
+                console.log(error);
+                $rootScope.user.token = undefined;
+                $rootScope.user.username = undefined;
+                $state.go('fatmind.login'); 
             });
         };
 

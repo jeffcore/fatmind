@@ -4,6 +4,7 @@
 var mongoose = require('mongoose');
 var Quantum = mongoose.model('Quantum');
 var User = mongoose.model('User');
+var CounterSync = mongoose.model('CounterSync');
 
 /*  Standard Response function */
 var sendJSONResponse = function(res, status, content) {
@@ -300,6 +301,22 @@ function generateUUID(){
     return uuid;
 }
 
+var counterIncrease = function counterSyncIncrease() {
+    CounterSync
+        .findOne()
+        .exec(function(err, countersync){
+            if (err) { }
+            if (countersync.counter) {
+                countersync.counter = countersync.counter + 1;
+            } else {
+                countersync.counter =  1;
+            }
+
+            countersync.save(function(err, res) { });
+        }
+    );
+}
+
 /*
  POST - create a new quantum
  /api/quantum/
@@ -328,6 +345,7 @@ module.exports.quantumCreate = function(req, res) {
                         console.log(err);
                     }
                 );
+                counterIncrease();
                 sendJSONResponse(res, 201, {data: quantum});
             }
         });
@@ -382,6 +400,7 @@ module.exports.quantumUpdateOne = function(req, res) {
                     if (err) {
                         sendJSONResponse(res, 400, err);
                     } else {
+                        counterIncrease();
                         sendJSONResponse(res, 200, {data: quantum});
                     }
                 });
@@ -420,8 +439,10 @@ module.exports.quantumDeleteOne = function(req, res) {
                             console.log(err);
                         }
                     );
-
-                    sendJSONResponse(res, 204, {message: 'successfully deleted quantum'});
+                    counterIncrease();
+                    sendJSONResponse(res, 204,
+                        {message: 'successfully deleted quantum'}
+                    );
                 }
             );
 

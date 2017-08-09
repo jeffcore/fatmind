@@ -3,6 +3,7 @@ var router = express.Router();
 var ctrlQuantum = require('../controllers/quantum.controller.js');
 var ctrlUser = require('../controllers/user.controller.js');
 var ctrlAlive = require('../controllers/alive.controller.js')
+var ctrlCounterSync = require('../controllers/countersync.controller.js');
 var apiTokenAuthorization = require('../middleware/token.auth.middle.js');
 var apiKeyAuthorization = require('../middleware/apikey.auth.middle.js');
 var userAuthorization = require('../middleware/user.auth.middle.js');
@@ -13,7 +14,7 @@ var fs = require('fs');
 router.post('/login', apiKeyAuthorization, ctrlUser.userAuthenticate);
 router.post('/user', apiKeyAuthorization, ctrlUser.userCreate);
 router.get('/areyoualive', apiKeyAuthorization, ctrlAlive.areYouAlive);
-
+router.get('/countersync', apiKeyAuthorization, ctrlCounterSync.counterSyncGet);
 
 //router.post('/particle/upload/:particleid', multipartMiddleware, apiKeyAuthorization, apiTokenAuthorization, ctrlImageUpload.particleImage);
 router.get('/quantum', apiKeyAuthorization, apiTokenAuthorization, ctrlQuantum.quantumList);

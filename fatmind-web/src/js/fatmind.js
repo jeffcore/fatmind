@@ -87,14 +87,15 @@ angular.module('fatmind', [
 
         $rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
             var requireLogin = toState.data.requireLogin;
-            console.log(requireLogin + "requirelogin");
+            console.log(requireLogin + " require login");
             if (requireLogin && $rootScope.user.token === 'undefined') {
                 console.log("got here no token in rootscope");
                 event.preventDefault();
                 $state.go('fatmind.login');
              } else {
                  if ($rootScope.user.token !== 'undefined') {
-                     console.log("got here  token");
+                     console.log("got here token");
+                     console.log($rootScope.user.token);
                      headers = Restangular.defaultHeaders;
                      headers['x-access-token'] = $rootScope.user.token;
                  }
