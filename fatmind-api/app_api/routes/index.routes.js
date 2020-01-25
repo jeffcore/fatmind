@@ -22,7 +22,7 @@ router.get('/quantum/all', apiKeyAuthorization, apiTokenAuthorization, ctrlQuant
 router.get('/quantum/bydate', apiKeyAuthorization, apiTokenAuthorization, ctrlQuantum.quantumListAfterDate);
 router.get('/quantum/bydateupdated', apiKeyAuthorization, apiTokenAuthorization, ctrlQuantum.quantumListAfterDateUpdated);
 router.post('/quantum/sync', apiKeyAuthorization, apiTokenAuthorization, ctrlQuantum.quantumSyncPut);
-router.get('/quantum/sync', apiKeyAuthorization, apiTokenAuthorization, ctrlQuantum.quantumSyncGet);
+router.get('/quantum/sync', apiKeyAuthorization, apiTokenAuthorization, ctrlQuantum.quantumSyncGetByCounter);
 
 
 router.post('/quantum', apiKeyAuthorization, apiTokenAuthorization, ctrlQuantum.quantumCreate);

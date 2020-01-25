@@ -14,65 +14,89 @@ var sendJSONResponse = function(res, status, content) {
 
 /*
  PUT a list of quantum changes sync
+  if quantum id is found it updates,
+  if quantum id is not found it creates a new one
  /api/quantum/sync
  */
 module.exports.quantumSyncPut = function(req, res) {
     //var obj = JSON.parse(req.body)
-    var quantumList = req.body;
-    console.log(quantumList);
-    for(i = 0; i < quantumList.length - 1; i++) {
+
+    console.log('in quantumSyncPut');
+    console.log('print quantumList in quantumSyncPut');
+    console.log('changes from device - creating or updating quantums on server');
+    var quantums = req.body;
+    console.log(quantums);
+    quantums.forEach(function(q){
         console.log('show latest quantum' );
-        console.log(quantumList[i]);
-        Quantum
-            .findOne({'guid': quantumList[i]['id']})
-            .populate('userID', 'username')
-            .exec(function(err, quantum){
-                // if (quantum) {
-                //     console.log('update quantum: show note' );
-                //     console.log(quantumList[i]);
-                //
-                //     quantum.note = quantumList[i]['note'];
-                //     quantum.dateUpdated = quantumList[i]['dateUpdated'];
-                //
-                //     quantum.save(function(err, location) {
-                //         if (err) {
-                //             console.log(err);
-                //         } else {
-                //             console.log('quautum entered');
-                //         }
-                //     });
-                // } else {
-                //     console.log('create quantum: show note' );
-                //     console.log(quantumList[i]);
-                //     Quantum
-                //         .create({
-                //             note: quantumList[i]['note'],
-                //             userID: req.decoded._id,
-                //             guid: quantumList[i]['id'],
-                //             dateUpdated: quantumList[i]['dateUpdated']
-                //         }, function(err, quantum) {
-                //             if (err) {
-                //                 console.log(err);
-                //                 //sendJSONResponse(res, 400, err);
-                //             } else {
-                //                 console.log(quantum);
-                //
-                //                 User.findByIdAndUpdate(
-                //                     req.decoded._id,
-                //                     {$push: {quanta: quantum._id}},
-                //                     {safe: true, upsert: true},
-                //                     function(err, model) {
-                //                         console.log(err);
-                //                     }
-                //                 );
-                //                 //sendJSONResponse(res, 201, {data: quantum});
-                //             }
-                //         });
-                //         console.log('new quautum entered');
-                // }
-            }
-        );
-    }
+        console.log(q);
+
+        CounterSync
+            .findOne({})
+            .exec(q, function(err, counter) {
+                Quantum
+                    .findOne({'guid': q['id']})
+                    .populate('userID', 'username')
+                    .exec(function(err, quantum){
+                        if (quantum) {
+                            console.log('Update quantum: ' );
+
+                            quantum.note = q['note'];
+                            quantum.dateUpdated = q['dateUpdated'];
+                            quantum.counter = counter.counter;
+
+                            quantum.save(function(err, location) {
+                                if (err) {
+                                    console.log(err);
+                                } else {
+                                    CounterSync.increaseCounter(function(err, counter) {});
+                                    console.log('quautum updated');
+                                }
+                            });
+                        } else {
+                            console.log('create quantum: ' );
+                            console.log(quantum);
+                            Quantum
+                                .create({
+                                    note: q['note'],
+                                    userID: req.decoded._id,
+                                    guid: q['id'],
+                                    dateUpdated: q['dateUpdated'],
+                                    counter: counter.counter
+                                }, function(err, quantum) {
+                                    if (err) {
+                                        console.log(err);
+                                        //sendJSONResponse(res, 400, err);
+                                    } else {
+                                        console.log(quantum);
+                                        CounterSync.increaseCounter(function(err, counter) {});
+                                        User.findByIdAndUpdate(
+                                            req.decoded._id,
+                                            {$push: {quanta: quantum._id}},
+                                            {safe: true, upsert: true},
+                                            function(err, model) {
+                                                console.log(err);
+                                            }
+                                        );
+                                    }
+                                });
+                                console.log('new quautum entered');
+                        }
+                    });
+            });
+
+
+        // CounterSync.getCounter(req, q, i, function(err, counter) {
+        //     console.log('fancy counter call back');
+        //     console.log(counter.counter);
+        //     console.log('quantum in get getCounter');
+        //     console.log(q[i]);
+
+
+
+
+
+    //     }.bind({req: req, q: quantumList, i: i}));
+    });
 
     sendJSONResponse(res, 200, {message: 'successfully synced quantum'});
     console.log("successfully synced quantum");
@@ -84,6 +108,7 @@ module.exports.quantumSyncPut = function(req, res) {
  /api/quantum/sync/
 */
 module.exports.quantumSyncGet = function(req, res) {
+    console.log("changes made on server that will be added to device");
     console.log('in ChangesAfterDate ' + decodeURIComponent(req.query.datelastupdate));
     console.log('converted in ChangesAfterDate ' + new Date(decodeURIComponent(req.query.datelastupdate)));
     Quantum
@@ -117,10 +142,48 @@ module.exports.quantumSyncGet = function(req, res) {
 
 
 /*
- GET a list of quantums
+ GET a list of quantums after date
+ /api/quantum/sync/
+*/
+module.exports.quantumSyncGetByCounter = function(req, res) {
+    console.log('in quantumSyncGetByCounter ' + req.query.counter);
+    Quantum
+        .find({
+                'counter' : { $gte: req.query.counter },
+                'userID' : req.decoded._id//,
+                //$and: [{$or:[ {'new': true}, {'updated':true}, {'deleted':true} ]}]
+            }
+        )
+        .populate('userID', 'username')
+        .exec(function(err, quantum) {
+            if (!quantum) {
+                sendJSONResponse(res, 404, {
+                    success: false,
+                    message: "quantum id not found"
+                });
+                return;
+            } else if (err) {
+                console.log(err);
+                sendJSONResponse(res, 404, {
+                    success: false,
+                    message: "error loading quantums"
+                });
+                return;
+            }
+            console.log('quantumSyncGetByCounter: quantums found');
+            console.log(quantum);
+            sendJSONResponse(res, 200, {data: quantum});
+        }
+    );
+};
+
+
+/*
+ GET a list of all quantums
  /api/quantum/all
  */
 module.exports.quantumListAll = function(req, res) {
+    console.log('quantumlistall' + req.decoded._id);
     Quantum
         .find({'userID' : req.decoded._id})
         .populate('userID', 'username')
@@ -224,7 +287,7 @@ module.exports.quantumListAfterDateUpdated = function(req, res) {
  GET a list of quantums
  /api/quantum/
  */
-module.exports.quantumList = function(req, res) {
+module.exports.quantumList = function(req, res) {    
     Quantum
         .find({'userID' : req.decoded._id})
         .sort({dateCreated: 'desc'})
@@ -291,7 +354,7 @@ module.exports.quantumSearch = function(req, res) {
 
 };
 
-function generateUUID(){
+var generateUUID = function generateUUID(){
     var d = new Date().getTime();
     var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
         var r = (d + Math.random()*16)%16 | 0;
@@ -299,22 +362,6 @@ function generateUUID(){
         return (c=='x' ? r : (r&0x3|0x8)).toString(16);
     });
     return uuid;
-}
-
-var counterIncrease = function counterSyncIncrease() {
-    CounterSync
-        .findOne()
-        .exec(function(err, countersync){
-            if (err) { }
-            if (countersync.counter) {
-                countersync.counter = countersync.counter + 1;
-            } else {
-                countersync.counter =  1;
-            }
-
-            countersync.save(function(err, res) { });
-        }
-    );
 }
 
 /*
@@ -325,30 +372,41 @@ module.exports.quantumCreate = function(req, res) {
     console.log('quantumcreate body');
     console.log(req.body);
 
-    Quantum
-        .create({
-            note: req.body.note,
-            userID: req.decoded._id,
-            guid: generateUUID()
-        }, function(err, quantum) {
-            if (err) {
-                console.log(err);
-                sendJSONResponse(res, 400, err);
-            } else {
-                console.log(quantum);
+    CounterSync.getCounter(req, function(err, counter) {
+        console.log('fancy counter call badk think');
+        console.log(counter.counter);
+        Quantum
+            .create({
+                note: req.body.note,
+                userID: req.decoded._id,
+                guid: generateUUID(),
+                counter: counter.counter
+            }, function(err, quantum) {
+                if (err) {
+                    console.log(err);
+                    sendJSONResponse(res, 400, err);
+                } else {
+                    console.log("quantum created: ");
+                    console.log(quantum);
 
-                User.findByIdAndUpdate(
-                    req.decoded._id,
-                    {$push: {quanta: quantum._id}},
-                    {safe: true, upsert: true},
-                    function(err, model) {
-                        console.log(err);
-                    }
-                );
-                counterIncrease();
-                sendJSONResponse(res, 201, {data: quantum});
-            }
+                    CounterSync.increaseCounter(function(err, counter) {});
+
+                    User.findByIdAndUpdate(
+                        req.decoded._id,
+                        {$push: {quanta: quantum._id}},
+                        {safe: true, upsert: true},
+                        function(err, model) {
+                            console.log(err);
+                        }
+                    );
+
+                    sendJSONResponse(res, 201, {data: quantum});
+                }
         });
+    });
+
+
+
 };
 
 /*
@@ -378,34 +436,39 @@ module.exports.quantumReadOne = function(req, res) {
 */
 module.exports.quantumUpdateOne = function(req, res) {
     if (req.params && req.params.quantumid) {
-        Quantum
-            .findById(req.params.quantumid)
-            .populate('userID', 'username')
-            .exec(function(err, quantum){
-                if(!quantum){
-                    sendJSONResponse(res, 400, {
-                        message: 'quantum id not found'
-                    });
-                    return;
-                } else if(err) {
-                    sendJSONResponse(res, 400, err);
-                    return;
-                }
-                quantum.note = req.body.note;
-                quantum.alive = req.body.alive;
-                quantum.dateUpdated = new Date();
-                quantum.updated = true;
-
-                quantum.save(function(err, location) {
-                    if (err) {
+        CounterSync.getCounter(req, function(err, counter) {
+            console.log('fancy counter call badk think');
+            console.log(counter.counter);
+            Quantum
+                .findById(req.params.quantumid)
+                .populate('userID', 'username')
+                .exec(function(err, quantum){
+                    if(!quantum){
+                        sendJSONResponse(res, 400, {
+                            message: 'quantum id not found'
+                        });
+                        return;
+                    } else if(err) {
                         sendJSONResponse(res, 400, err);
-                    } else {
-                        counterIncrease();
-                        sendJSONResponse(res, 200, {data: quantum});
+                        return;
                     }
-                });
-            }
-        );
+                    quantum.note = req.body.note;
+                    quantum.alive = req.body.alive;
+                    quantum.dateUpdated = new Date();
+                    quantum.updated = true;
+                    quantum.counter = counter.counter;
+
+                    quantum.save(function(err, location) {
+                        if (err) {
+                            sendJSONResponse(res, 400, err);
+                        } else {
+                            CounterSync.increaseCounter(function(err, counter) {});
+                            sendJSONResponse(res, 200, {data: quantum});
+                        }
+                    });
+                }
+            );
+        });
     } else {
         console.log('No quantumid specified');
         sendJSONResponse(res, 400, {
@@ -413,7 +476,6 @@ module.exports.quantumUpdateOne = function(req, res) {
         });
     }
 };
-
 /*
     DELETE a quantum by id
     /api/quantum/:quantumid
@@ -439,7 +501,7 @@ module.exports.quantumDeleteOne = function(req, res) {
                             console.log(err);
                         }
                     );
-                    counterIncrease();
+                    // counterUpdate();
                     sendJSONResponse(res, 204,
                         {message: 'successfully deleted quantum'}
                     );

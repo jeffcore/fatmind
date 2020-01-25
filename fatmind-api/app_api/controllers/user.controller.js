@@ -41,8 +41,8 @@ module.exports.userAuthenticate = function(req, res) {
                     console.log(user);
                     // Great, user has successfully authenticated, so we can generate
                     // and send them a token.
-                    var token = jwt.sign(user, config.secret, {
-                        expiresIn: 43200 // expires in 30 days
+                    var token = jwt.sign(user.toJSON(), config.secret, {
+                         expiresIn: '30d' // expires in 30 days
                     });
 
                     response = {
@@ -92,9 +92,7 @@ module.exports.userCreate = function(req, res) {
             } else {
                 console.log(user);
 
-                var token = jwt.sign(user, config.secret, {
-                    expiresIn: 43200 // expires in 30 days
-                });
+                var token = jwt.sign(user, config.secret, {});
 
                 var response = {
                     success: true,

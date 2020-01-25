@@ -10,13 +10,14 @@ module.exports = function(req, res, next){
         // verifies secret and checks exp
         jwt.verify(token, config.secret, function(err, decoded) {
             if (err) {
+                console.log('unauthorized access - token bad');
                 return res.status(401).send({
                     success: false,
                     message: 'Failed to authenticate token.'
                 });
             } else {
                 // if everything is good, save to request for use in other routes
-                req.decoded = decoded._doc;
+                req.decoded = decoded;
                 next();
             }
         });

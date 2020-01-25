@@ -32,6 +32,11 @@ var quantumSchema = new mongoose.Schema({
     deleted: {
         type: Boolean,
         default: false
+    },
+    counter: {
+        type: Number,
+        "default": 0,
+        require: true
     }
 });
 

@@ -1,4 +1,0 @@
-var config_module = angular.module('fatmind.config', [])
-		.constant('APP_APIKEY','your_api_key')
-		.constant('APP_URL','url_of_api')
-;

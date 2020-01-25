@@ -4,7 +4,7 @@ services:
 
   #Database
   database:
-    image: mongo
+    image: mongo:3.4
     container_name: fatmind-mongo
     ports:
       - "27017:27017"
@@ -21,14 +21,13 @@ services:
     volumes:
       - ./fatmind-api:/src
       - /src/node_modules
-
+    
   fatmind-web:
-    build:
-        context: ./fatmind-web
-        dockerfile: web.dockerfile
-    container_name: fatmind-web
-    ports:
-      - "8090:8090"
-    volumes:
-      - ./fatmind-web/:/src/
-      - /src/node_modules/
+        build:
+            context: ./fatmind-web
+            dockerfile: web.dockerfile
+        container_name: fatmind-web
+        ports:
+          - "8050:8080"
+        volumes:
+          - ./fatmind-web/:/app/
