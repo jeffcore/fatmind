@@ -19,9 +19,9 @@
           @click="addQuantum">Add</button>
     </div>
     <div class="note-list">
-        <span v-if="!quantums.length">No results.</span>
+        <span v-if="!quantumList.length">No results.</span>
         <ul >
-          <li v-for="(q, index) in quantums" :key="q._id" class="noteStyle">
+          <li v-for="(q, index) in quantumList" :key="q._id" class="noteStyle">
               <span><pre>{{ q.note }}</pre></span>
               <br/>
               <div class="noteDetails">
@@ -42,6 +42,7 @@
 <script>
 // @ is an alias to /src
 import modal from '@/components/EditModal.vue'
+import { mapState } from 'vuex'
 export default {
   components: {
     modal
@@ -56,11 +57,9 @@ export default {
       showModal: false
     }
   },
-  computed: {
-    quantums () {
-      return this.$store.state.quantumList
-    }
-  },
+  computed: mapState([
+    'quantumList'
+  ]),
   created () {
     this.$store.dispatch('getQuantums', this.$route.params.id)
   },

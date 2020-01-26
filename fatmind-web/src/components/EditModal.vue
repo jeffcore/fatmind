@@ -41,6 +41,7 @@ export default {
   methods: {
     editQuantum: function () {
       this.$store.dispatch('editQuantum', this.payload)
+      this.$emit('close')
     }
   }
 }

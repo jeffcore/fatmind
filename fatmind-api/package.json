@@ -9,7 +9,7 @@
     "bcrypt": "^1.0.2",
     "body-parser": "1.17.2",
     "connect-multiparty": "2.0.0",
-    "debug": "2.6.8",
+    "debug": "2.6.9",
     "express": "^4.15.3",
     "jsonwebtoken": "7.0.0",
     "mongoosastic": "4.3.0",

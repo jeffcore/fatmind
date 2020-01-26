@@ -35,6 +35,16 @@ export default new Vuex.Store({
     setQuantumList (state, quantumList) {
       state.quantumList = quantumList
     },
+    updateQuantumList (state, payload) {
+      console.log(payload.id);
+      for (let i = 0; i <state.quantumList.length; i++) {
+        if (state.quantumList[i]._id == payload.id) {
+          state.quantumList[i].note = payload.note;   
+          console.log(state.quantumList[i].note)       
+        }
+      }     
+      console.log(state.quantumList)
+    },
     setLoginAPIError (state, loginAPIError) {
       state.loginAPIError = loginAPIError
     },
@@ -103,7 +113,7 @@ export default new Vuex.Store({
         axios(config)
           .then(response => {
             // console.log(response)
-            context.commit('setQuantumList', response.data.data)
+            context.commit('updateQuantumList', payload);            
           })
           .catch(e => {
             console.log(e)
