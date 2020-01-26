@@ -39,11 +39,12 @@ export default new Vuex.Store({
       console.log(payload.id);
       for (let i = 0; i <state.quantumList.length; i++) {
         if (state.quantumList[i]._id == payload.id) {
-          state.quantumList[i].note = payload.note;   
-          console.log(state.quantumList[i].note)       
+          state.quantumList[i].note = payload.note;
         }
-      }     
-      console.log(state.quantumList)
+      }
+    },
+    addQuantumList (state, payload) {
+      state.quantumList.unshift(payload);
     },
     setLoginAPIError (state, loginAPIError) {
       state.loginAPIError = loginAPIError
@@ -75,8 +76,9 @@ export default new Vuex.Store({
       // console.log(payload)
       axios(config)
         .then(response => {          
-          console.log(response)
-          router.push('/')
+          // console.log(response)
+          context.commit('addQuantumList', response.data.data)          
+          router.push('/').catch(err => {})
         })
         .catch(e => {
           
@@ -132,7 +134,7 @@ export default new Vuex.Store({
         axios(config)
           .then(response => {
             // console.log(response)
-            context.commit('setQuantumList', response.data.data)
+            // context.commit('setQuantumList', response.data.data)
           })
           .catch(e => {
             // console.log(e)
@@ -172,7 +174,7 @@ export default new Vuex.Store({
           // console.log(response)
           // context.commit('setLoginAPIError', false)
           context.commit('setToken', response.data.token)
-          router.push('/')
+          router.push('/').catch(err => {})
         })
         .catch(e => {
           // console.log(e)

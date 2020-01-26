@@ -19,7 +19,7 @@
           @click="addQuantum">Add</button>
     </div>
     <div class="note-list">
-        <span v-if="!quantumList.length">No results.</span>
+        <span v-if="!quantumList">No results.</span>
         <ul >
           <li v-for="(q, index) in quantumList" :key="q._id" class="noteStyle">
               <span><pre>{{ q.note }}</pre></span>
@@ -75,7 +75,7 @@ export default {
       }
     },
     deleteQuantum: function (quantumid, index) {      
-      this.$delete(this.quantums, index)
+      this.$delete(this.quantumList, index)
       this.$store.dispatch('deleteQuantum', {id: quantumid})
     },
     showEditModal: function (quantumid, index, note) {
