@@ -1,5 +1,4 @@
 var mongoose = require('mongoose');
-var bcrypt = require('bcrypt');
 var Schema = mongoose.Schema;
 var Quantum = require('./quantum.model.js');
 var SALT_WORK_FACTOR = 10;

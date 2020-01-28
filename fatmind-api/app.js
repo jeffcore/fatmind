@@ -7,6 +7,7 @@ require('./app_api/models/db.js');
 var routesApi = require('./app_api/routes/index.routes.js');  //load routes
 var multipart = require('connect-multiparty');
 var multipartMiddleware = multipart();
+const bcrypt = require('bcrypt');
 
 // uncomment after placing your favicon in /public
 app.use(logger('dev'));
