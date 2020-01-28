@@ -1,6 +1,6 @@
 # create a file named Dockerfile
-FROM node:13.7.0
-# Node.js 12.14.1
+FROM node:erbium
+# v12.14.1
 # https://nodejs.org/en/download/releases/
 
 RUN mkdir -p /src
