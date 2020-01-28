@@ -1,15 +1,17 @@
 # create a file named Dockerfile
-FROM node:carbon
+FROM node:13.7.0
+# Node.js 12.14.1
+# https://nodejs.org/en/download/releases/
 
 RUN mkdir -p /src
 WORKDIR /src
 
-RUN npm install -g nodemon@1.17.4 --quiet
-RUN npm install bson@3.0.2 --quiet
+RUN npm install -g nodemon@2.0.2 --quiet
+RUN npm install bson@4.0.3 --quiet
 
 COPY package.json /src
 
-RUN npm install 
+RUN npm install
 RUN npm update
 COPY . /src
 

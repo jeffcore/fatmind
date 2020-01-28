@@ -7,8 +7,6 @@ var ctrlCounterSync = require('../controllers/countersync.controller.js');
 var apiTokenAuthorization = require('../middleware/token.auth.middle.js');
 var apiKeyAuthorization = require('../middleware/apikey.auth.middle.js');
 var userAuthorization = require('../middleware/user.auth.middle.js');
-var multipart = require('connect-multiparty');
-var multipartMiddleware = multipart();
 var fs = require('fs');
 
 router.post('/login', apiKeyAuthorization, ctrlUser.userAuthenticate);
@@ -16,7 +14,6 @@ router.post('/user', apiKeyAuthorization, ctrlUser.userCreate);
 router.get('/areyoualive', apiKeyAuthorization, ctrlAlive.areYouAlive);
 router.get('/countersync', apiKeyAuthorization, ctrlCounterSync.counterSyncGet);
 
-//router.post('/particle/upload/:particleid', multipartMiddleware, apiKeyAuthorization, apiTokenAuthorization, ctrlImageUpload.particleImage);
 router.get('/quantum', apiKeyAuthorization, apiTokenAuthorization, ctrlQuantum.quantumList);
 router.get('/quantum/all', apiKeyAuthorization, apiTokenAuthorization, ctrlQuantum.quantumListAll);
 router.get('/quantum/bydate', apiKeyAuthorization, apiTokenAuthorization, ctrlQuantum.quantumListAfterDate);

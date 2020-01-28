@@ -1,5 +1,4 @@
 var mongoose = require('mongoose');
-var mongoosastic = require("mongoosastic");
 var Schema = mongoose.Schema;
 
 var quantumSchema = new mongoose.Schema({
