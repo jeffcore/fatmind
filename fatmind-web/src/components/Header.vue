@@ -1,10 +1,12 @@
 <template>
   <div id="header">
-    <div id="header" style="width:100%; text-align:right;">
-        <a href="/#">Quantum Brain </a>
+    <div id="header-left" >
+        <a href="/#">fatmind</a>       
+    </div>
+    <div id="header-right">
         <a
           href="#"
-          @click.prevent="logout">Logout</a>
+          @click.prevent="logout">logout</a>
     </div>
   </div>
 </template>
@@ -22,5 +24,18 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
+#header {
+  width: 98%;
+  padding: 10px;
+}
+#header-left {
+  width: 45%;
+  text-align: left;
+  float: left;
+}
+#header-right {
+  width: 45%;
+  text-align: right;
+  float: right;
+}
 </style>
