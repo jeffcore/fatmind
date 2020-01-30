@@ -1,7 +1,8 @@
 # fatmind
 MEVN note taking app.
 
-This project was created to create a second brain to save sensitive and trivial information. The original criteria was that it would never store any information externally on the internet/cloud. 
+This project was started to create a second brain to save sensitive and trivial information. The original criteria was that it would never store any information externally on the internet/cloud. 
+
 This platform I decided on was:
 1. Local MongoDB database stored on your computer - this is the master 
 2. Express/NodeJS API to communitate with database
@@ -19,3 +20,6 @@ Configure app:
 - copy config file /fatmind-web/src/js/fatmind.config.js.example to new file fatmind.config.js
 - run:  docker-compose up
 - create a mongodb database called fatmind or whatever you want
+
+## Credits
+Data Syncronization - https://www.slideshare.net/nikonelissen/appsyncorg-opensource-patterns-and-code-for-data-synchronization-in-mobile-apps
