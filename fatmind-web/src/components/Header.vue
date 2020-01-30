@@ -25,17 +25,19 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 #header {
-  width: 98%;
-  padding: 10px;
+  width: 100%;    
+  padding-top: 5px;
 }
 #header-left {
-  width: 45%;
+  width: 48%;
   text-align: left;
   float: left;
+  padding-left: 5px
 }
 #header-right {
-  width: 45%;
+  width: 48%;
   text-align: right;
   float: right;
+  padding-right: 10px;
 }
 </style>
