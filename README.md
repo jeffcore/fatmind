@@ -8,7 +8,7 @@ This platform I decided on was:
 2. Express/NodeJS API to communitate with database
 3. VueJS front end client to add and search for notes
 4. iOS App client to add and search for notes (see fatmind-ios repo)
-5. Currently the iOS app has data syncing for create and update functionality (delete comming soon)
+5. Currently the iOS app has data syncing for create and update functionality (delete coming soon)
 
 The end goal is to have a central server with only the MongoDB database on a Raspberry Pi. Then all clients will sync with it. 
 
@@ -22,4 +22,4 @@ Configure app:
 - create a mongodb database called fatmind or whatever you want
 
 ## Credits
-Data Syncronization - https://www.slideshare.net/nikonelissen/appsyncorg-opensource-patterns-and-code-for-data-synchronization-in-mobile-apps
+Data Synchronization - https://www.slideshare.net/nikonelissen/appsyncorg-opensource-patterns-and-code-for-data-synchronization-in-mobile-apps
