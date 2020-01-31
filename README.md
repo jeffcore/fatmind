@@ -1,4 +1,4 @@
-# fatmind
+# fatmind - the second brain
 MEVN note taking app.
 
 This project was started to create a second brain to save sensitive and trivial information. The original criteria was that it would never store any information externally on the internet/cloud. 

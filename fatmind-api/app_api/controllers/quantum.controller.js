@@ -90,11 +90,6 @@ module.exports.quantumSyncPut = function(req, res) {
         //     console.log(counter.counter);
         //     console.log('quantum in get getCounter');
         //     console.log(q[i]);
-
-
-
-
-
     //     }.bind({req: req, q: quantumList, i: i}));
     });
 
@@ -209,9 +204,6 @@ module.exports.quantumListAll = function(req, res) {
     );
 };
 
-
-
-
 /*
  GET a list of quantums after date
  /api/quantum/bydate/
@@ -282,14 +274,16 @@ module.exports.quantumListAfterDateUpdated = function(req, res) {
     );
 };
 
-
 /*
  GET a list of quantums
  /api/quantum/
  */
 module.exports.quantumList = function(req, res) {    
     Quantum
-        .find({'userID' : req.decoded._id})
+        .find({
+            'userID' : req.decoded._id,
+            'deleted' : false
+        })
         .sort({dateCreated: 'desc'})
         .limit(20)
         .populate('userID', 'username')
@@ -334,24 +328,29 @@ module.exports.quantumSearch = function(req, res) {
         sendJSONResponse(res, 200, {data: quantum});
     });
 */
-
     Quantum.find(
         { $text : { $search : terms } },
         { score : { $meta: "textScore" } }
     )
     .sort({ score : { $meta : 'textScore' } })
     .exec(function(err, results) {
-        console.log(results);
-        sendJSONResponse(res, 200, {data: results});
+        console.log(results)
+        var output = []
+        var s = ''
+        for (s of results) {
+            if (s['deleted'] == false) {                
+                output.push(s)
+            }
+        } 
+        sendJSONResponse(res, 200, {data: output});
     });
+
 
     //
     // Quantum.search(terms, function(error, results){
     //     console.log(results);
     //     sendJSONResponse(res, 200, {data: results});
     // });
-
-
 };
 
 var generateUUID = function generateUUID(){
@@ -404,9 +403,6 @@ module.exports.quantumCreate = function(req, res) {
                 }
         });
     });
-
-
-
 };
 
 /*
@@ -477,57 +473,76 @@ module.exports.quantumUpdateOne = function(req, res) {
     }
 };
 /*
-    DELETE a quantum by id
+    DELETE a quantum by id  - soft delete
     /api/quantum/:quantumid
 */
 module.exports.quantumDeleteOne = function(req, res) {
-    var quantumid = req.params.quantumid;
-    if (quantumid) {
-        Quantum
-            .findByIdAndRemove(quantumid)
-            .exec(
-                function(err, quantum) {
-                    if (err) {
-                        console.log(err);
-                        sendJSONResponse(res, 404, err);
+    if (req.params && req.params.quantumid) {
+        CounterSync.getCounter(req, function(err, counter) {
+            console.log('fancy counter call badk think');
+            console.log(counter.counter);
+            console.log(req.params.quantumid)
+            Quantum
+                .findById(req.params.quantumid)
+                .populate('userID', 'username')
+                .exec(function(err, quantum){
+                    if(!quantum){
+                        sendJSONResponse(res, 400, {
+                            message: 'quantum id not found'
+                        });
+                        return;
+                    } else if(err) {
+                        sendJSONResponse(res, 400, err);
                         return;
                     }
-                    console.log("Location id " + quantumid + " deleted");
+                    quantum.deleted = true;
+                    quantum.dateUpdated = new Date();
+                    quantum.updated = true;
+                    quantum.counter = counter.counter;
 
-                    User.findByIdAndUpdate(
-                        req.decoded._id,
-                        {$pull: {quanta: quantum._id}},
-                        function(err, model) {
-                            console.log(err);
+                    quantum.save(function(err, location) {
+                        if (err) {
+                            sendJSONResponse(res, 400, err);
+                        } else {
+                            CounterSync.increaseCounter(function(err, counter) {});
+                            sendJSONResponse(res, 200, {data: quantum});
                         }
-                    );
-                    // counterUpdate();
-                    sendJSONResponse(res, 204,
-                        {message: 'successfully deleted quantum'}
-                    );
+                    });
                 }
             );
-
-          //
-        //   Quantum.findById(quantumid, function(err, quantum) {
-        //     //   quantum.remove(function(err, quantum) {
-        //     //     if (err) {
-        //     //         console.log(err);
-        //     //         sendJSONResponse(res, 404, err);
-        //     //         return;
-        //     //     }
-        //     //     console.log("Location id " + quantumid + " deleted");
-        //       //
-        //     //     User.findByIdAndUpdate(
-        //     //         req.decoded._id,
-        //     //         {$pull: {quanta: quantum._id}},
-        //     //         function(err, model) {
-        //     //             console.log(err);
-        //     //         }
-        //     //     );
-          //
-        //          sendJSONResponse(res, 204, {message: 'successfully deleted quantum'});
-        //     });
-        //});
+        });
+    } else {
+        console.log('No quantumid specified');
+        sendJSONResponse(res, 400, {
+            message: 'No quantumid in request'
+        });   
     }
+    // hard delete
+    // var quantumid = req.params.quantumid;
+    // if (quantumid) {
+    //     Quantum
+    //         .findByIdAndRemove(quantumid)
+    //         .exec(
+    //             function(err, quantum) {
+    //                 if (err) {
+    //                     console.log(err);
+    //                     sendJSONResponse(res, 404, err);
+    //                     return;
+    //                 }
+    //                 console.log("Location id " + quantumid + " deleted");
+
+    //                 User.findByIdAndUpdate(
+    //                     req.decoded._id,
+    //                     {$pull: {quanta: quantum._id}},
+    //                     function(err, model) {
+    //                         console.log(err);
+    //                     }
+    //                 );
+    //                 // counterUpdate();
+    //                 sendJSONResponse(res, 204,
+    //                     {message: 'successfully deleted quantum'}
+    //                 );
+    //             }
+    //         );
+    // }
 };
