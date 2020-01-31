@@ -24,7 +24,6 @@ module.exports = function(req, res, next){
                     sendJSONResponse(res, 401, {
                         message: 'You are not allowed to edit this quantum.'
                     });
-
                 }
             }
         )

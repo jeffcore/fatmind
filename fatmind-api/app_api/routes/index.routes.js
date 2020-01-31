@@ -18,9 +18,8 @@ router.get('/quantum', apiKeyAuthorization, apiTokenAuthorization, ctrlQuantum.q
 router.get('/quantum/all', apiKeyAuthorization, apiTokenAuthorization, ctrlQuantum.quantumListAll);
 router.get('/quantum/bydate', apiKeyAuthorization, apiTokenAuthorization, ctrlQuantum.quantumListAfterDate);
 router.get('/quantum/bydateupdated', apiKeyAuthorization, apiTokenAuthorization, ctrlQuantum.quantumListAfterDateUpdated);
-router.post('/quantum/sync', apiKeyAuthorization, apiTokenAuthorization, ctrlQuantum.quantumSyncPut);
+router.post('/quantum/sync', apiKeyAuthorization, apiTokenAuthorization, ctrlQuantum.quantumSyncPost);
 router.get('/quantum/sync', apiKeyAuthorization, apiTokenAuthorization, ctrlQuantum.quantumSyncGetByCounter);
-
 
 router.post('/quantum', apiKeyAuthorization, apiTokenAuthorization, ctrlQuantum.quantumCreate);
 router.get('/quantum/:quantumid', apiKeyAuthorization, apiTokenAuthorization, ctrlQuantum.quantumReadOne);

@@ -13,16 +13,16 @@ var sendJSONResponse = function(res, status, content) {
 };
 
 /*
- PUT a list of quantum changes sync
+ POST a list of quantum changes sync
   if quantum id is found it updates,
   if quantum id is not found it creates a new one
  /api/quantum/sync
  */
-module.exports.quantumSyncPut = function(req, res) {
+module.exports.quantumSyncPost = function(req, res) {
     //var obj = JSON.parse(req.body)
 
-    console.log('in quantumSyncPut');
-    console.log('print quantumList in quantumSyncPut');
+    console.log('in quantumSyncPost');
+    console.log('print quantumList in quantumSyncPost');
     console.log('changes from device - creating or updating quantums on server');
     var quantums = req.body;
     console.log(quantums);
@@ -82,59 +82,11 @@ module.exports.quantumSyncPut = function(req, res) {
                                 console.log('new quautum entered');
                         }
                     });
-            });
-
-
-        // CounterSync.getCounter(req, q, i, function(err, counter) {
-        //     console.log('fancy counter call back');
-        //     console.log(counter.counter);
-        //     console.log('quantum in get getCounter');
-        //     console.log(q[i]);
-    //     }.bind({req: req, q: quantumList, i: i}));
+            });       
     });
-
     sendJSONResponse(res, 200, {message: 'successfully synced quantum'});
     console.log("successfully synced quantum");
-
 };
-
-/*
- GET a list of quantums after date
- /api/quantum/sync/
-*/
-module.exports.quantumSyncGet = function(req, res) {
-    console.log("changes made on server that will be added to device");
-    console.log('in ChangesAfterDate ' + decodeURIComponent(req.query.datelastupdate));
-    console.log('converted in ChangesAfterDate ' + new Date(decodeURIComponent(req.query.datelastupdate)));
-    Quantum
-        .find({
-                'dateUpdated' : { $lt: new Date() , $gt: new Date(decodeURIComponent(req.query.datelastupdate)) },
-                'userID' : req.decoded._id//,
-                //$and: [{$or:[ {'new': true}, {'updated':true}, {'deleted':true} ]}]
-            }
-        )
-        .populate('userID', 'username')
-        .exec(function(err, quantum) {
-            if (!quantum) {
-                sendJSONResponse(res, 404, {
-                    success: false,
-                    message: "quantum id not found"
-                });
-                return;
-            } else if (err) {
-                console.log(err);
-                sendJSONResponse(res, 404, {
-                    success: false,
-                    message: "error loading quantums"
-                });
-                return;
-            }
-            console.log(quantum);
-            sendJSONResponse(res, 200, {data: quantum});
-        }
-    );
-};
-
 
 /*
  GET a list of quantums after date
@@ -172,7 +124,6 @@ module.exports.quantumSyncGetByCounter = function(req, res) {
     );
 };
 
-
 /*
  GET a list of all quantums
  /api/quantum/all
@@ -205,77 +156,7 @@ module.exports.quantumListAll = function(req, res) {
 };
 
 /*
- GET a list of quantums after date
- /api/quantum/bydate/
-*/
-module.exports.quantumListAfterDate = function(req, res) {
-    console.log('in listafterdate ' + decodeURIComponent(req.query.datelastupdate));
-    console.log('converted in listafterdate ' + new Date(decodeURIComponent(req.query.datelastupdate)));
-    Quantum
-        .find({
-            'dateCreated' :
-            { $lt: new Date() , $gt: new Date(decodeURIComponent(req.query.datelastupdate)) },
-            'userID' : req.decoded._id
-        })
-        .populate('userID', 'username')
-        .exec(function(err, quantum) {
-            if (!quantum) {
-                sendJSONResponse(res, 404, {
-                    success: false,
-                    message: "quantum id not found"
-                });
-                return;
-            } else if (err) {
-                console.log(err);
-                sendJSONResponse(res, 404, {
-                    success: false,
-                    message: "error loading quantums"
-                });
-                return;
-            }
-            console.log(quantum);
-            sendJSONResponse(res, 200, {data: quantum});
-        }
-    );
-};
-
-/*
- GET a list of quantums after date
- /api/quantum/bydateupdated/
-*/
-module.exports.quantumListAfterDateUpdated = function(req, res) {
-    console.log('in listafterdateupdated ' + decodeURIComponent(req.query.datelastupdate));
-    console.log('converted in listafterdate ' + new Date(decodeURIComponent(req.query.datelastupdate)));
-    Quantum
-        .find({
-            'dateUpdated' :
-            { $lt: new Date() , $gt: new Date(decodeURIComponent(req.query.datelastupdate)) },
-            'userID' : req.decoded._id
-        })
-        .populate('userID', 'username')
-        .exec(function(err, quantum) {
-            if (!quantum) {
-                sendJSONResponse(res, 404, {
-                    success: false,
-                    message: "quantum id not found"
-                });
-                return;
-            } else if (err) {
-                console.log(err);
-                sendJSONResponse(res, 404, {
-                    success: false,
-                    message: "error loading quantums"
-                });
-                return;
-            }
-            console.log(quantum);
-            sendJSONResponse(res, 200, {data: quantum});
-        }
-    );
-};
-
-/*
- GET a list of quantums
+ GET a list of quantums for homepage
  /api/quantum/
  */
 module.exports.quantumList = function(req, res) {    
@@ -481,6 +362,7 @@ module.exports.quantumDeleteOne = function(req, res) {
         CounterSync.getCounter(req, function(err, counter) {
             console.log('fancy counter call badk think');
             console.log(counter.counter);
+            console.log('id')
             console.log(req.params.quantumid)
             Quantum
                 .findById(req.params.quantumid)
@@ -543,6 +425,118 @@ module.exports.quantumDeleteOne = function(req, res) {
     //                     {message: 'successfully deleted quantum'}
     //                 );
     //             }
-    //         );
+    //         );    
     // }
+};
+
+/*
+ OLD SYNC NOT USED
+ GET a list of quantums after date created
+ /api/quantum/bydate/
+*/
+
+/*
+    old sync funciton not used
+*/
+// module.exports.quantumSyncGet = function(req, res) {
+//     console.log("changes made on server that will be added to device");
+//     console.log('in ChangesAfterDate ' + decodeURIComponent(req.query.datelastupdate));
+//     console.log('converted in ChangesAfterDate ' + new Date(decodeURIComponent(req.query.datelastupdate)));
+//     Quantum
+//         .find({
+//                 'dateUpdated' : { $lt: new Date() , $gt: new Date(decodeURIComponent(req.query.datelastupdate)) },
+//                 'userID' : req.decoded._id//,
+//                 //$and: [{$or:[ {'new': true}, {'updated':true}, {'deleted':true} ]}]
+//             }
+//         )
+//         .populate('userID', 'username')
+//         .exec(function(err, quantum) {
+//             if (!quantum) {
+//                 sendJSONResponse(res, 404, {
+//                     success: false,
+//                     message: "quantum id not found"
+//                 });
+//                 return;
+//             } else if (err) {
+//                 console.log(err);
+//                 sendJSONResponse(res, 404, {
+//                     success: false,
+//                     message: "error loading quantums"
+//                 });
+//                 return;
+//             }
+//             console.log(quantum);
+//             sendJSONResponse(res, 200, {data: quantum});
+//         }
+//     );
+// };
+
+
+
+
+module.exports.quantumListAfterDate = function(req, res) {
+    console.log('in listafterdate ' + decodeURIComponent(req.query.datelastupdate));
+    console.log('converted in listafterdate ' + new Date(decodeURIComponent(req.query.datelastupdate)));
+    Quantum
+        .find({
+            'dateCreated' :
+            { $lt: new Date() , $gt: new Date(decodeURIComponent(req.query.datelastupdate)) },
+            'userID' : req.decoded._id
+        })
+        .populate('userID', 'username')
+        .exec(function(err, quantum) {
+            if (!quantum) {
+                sendJSONResponse(res, 404, {
+                    success: false,
+                    message: "quantum id not found"
+                });
+                return;
+            } else if (err) {
+                console.log(err);
+                sendJSONResponse(res, 404, {
+                    success: false,
+                    message: "error loading quantums"
+                });
+                return;
+            }
+            console.log(quantum);
+            sendJSONResponse(res, 200, {data: quantum});
+        }
+    );
+};
+
+/*
+ OLD SYNC NOT USED
+ GET a list of quantums after date updated
+ /api/quantum/bydateupdated/
+*/
+module.exports.quantumListAfterDateUpdated = function(req, res) {
+    console.log('in listafterdateupdated ' + decodeURIComponent(req.query.datelastupdate));
+    console.log('converted in listafterdate ' + new Date(decodeURIComponent(req.query.datelastupdate)));
+    Quantum
+        .find({
+            'dateUpdated' :
+            { $lt: new Date() , $gt: new Date(decodeURIComponent(req.query.datelastupdate)) },
+            'userID' : req.decoded._id
+        })
+        .populate('userID', 'username')
+        .exec(function(err, quantum) {
+            if (!quantum) {
+                sendJSONResponse(res, 404, {
+                    success: false,
+                    message: "quantum id not found"
+                });
+                return;
+            } else if (err) {
+                console.log(err);
+                sendJSONResponse(res, 404, {
+                    success: false,
+                    message: "error loading quantums"
+                });
+                return;
+            }
+            console.log(quantum);
+            sendJSONResponse(res, 200, {data: quantum});
+        }
+    );
 };

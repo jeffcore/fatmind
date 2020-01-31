@@ -51,25 +51,3 @@ process.on('SIGTERM', function() {
 require('./quantum.model.js');
 require('./user.model.js');
 require('./countersync.model.js')
-
-var CounterSync = mongoose.model('CounterSync');
-
-CounterSync
-    .findOne()
-    .exec(function(err, countersync){
-        if (countersync) {
-            console.log('found one');
-        } else {
-            console.log('found none');
-
-            CounterSync
-                .create({
-                    counter: 0
-                }, function(err, counter) {
-                    if (err) {
-                        console.log(err);
-                    }
-                });
-        }
-    }
-);
