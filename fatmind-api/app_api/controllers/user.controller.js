@@ -86,14 +86,13 @@ module.exports.userCreate = function(req, res) {
                 } else {
                     sendJSONResponse(res, 400, {message: "There was an error creating user."});
                 }
-
-
-
             } else {
                 console.log(user);
 
-                var token = jwt.sign(user, config.secret, {});
-
+                var token = jwt.sign(user.toJSON(), config.secret, {
+                    expiresIn: '30d' // expires in 30 days
+                });
+                
                 var response = {
                     success: true,
                     message: "user successfully created",
