@@ -1,7 +1,7 @@
 <template>
   <div id="header">
     <div id="header-left" >
-        <a href="/#">fatmind</a>       
+        <a href="/">fatmind</a>       
     </div>
     <div id="header-right">
         <a

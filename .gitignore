@@ -1,7 +1,8 @@
 /fatmind-dataexport/*
 .DS_Store
 npm-debug.log
-
+/fatmind-angular
+/fatmind-web2
 
 # Editor directories and files
 .idea
