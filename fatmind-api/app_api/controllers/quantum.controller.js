@@ -119,7 +119,7 @@ module.exports.quantumSyncGetByCounter = function(req, res) {
             }
             console.log('quantumSyncGetByCounter: quantums found');
             console.log(quantum);
-            sendJSONResponse(res, 200, {data: quantum});
+            sendJSONResponse(res, 200, quantum);
         }
     );
 };
@@ -150,7 +150,7 @@ module.exports.quantumListAll = function(req, res) {
             }
             console.log("user found " + req.decoded._id);
             console.log(quantum);
-            sendJSONResponse(res, 200, {data: quantum});
+            sendJSONResponse(res, 200, quantum);
         }
     );
 };
@@ -184,7 +184,7 @@ module.exports.quantumList = function(req, res) {
                 return;
             }
             console.log(quantum);
-            sendJSONResponse(res, 200, {data: quantum});
+            sendJSONResponse(res, 200, quantum);
         }
     );
 };
@@ -215,7 +215,7 @@ module.exports.quantumSearch = function(req, res) {
     )
     .sort({ score : { $meta : 'textScore' } })
     .exec(function(err, results) {
-        console.log(results)
+        // console.log(results)
         var output = []
         var s = ''
         for (s of results) {
@@ -223,7 +223,8 @@ module.exports.quantumSearch = function(req, res) {
                 output.push(s)
             }
         } 
-        sendJSONResponse(res, 200, {data: output});
+        console.log(output)
+        sendJSONResponse(res, 200, output);
     });
 
 

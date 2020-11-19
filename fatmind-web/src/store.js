@@ -6,7 +6,10 @@ import createPersistedState from 'vuex-persistedstate'
 
 Vue.use(Vuex)
 
+// axios.defaults.baseURL = 'http://192.168.25.69:3000/api'
 axios.defaults.baseURL = 'http://localhost:3002/api'
+
+
 
 export default new Vuex.Store({
   plugins: [createPersistedState()],
@@ -96,7 +99,7 @@ export default new Vuex.Store({
         axios(config)
           .then(response => {
             // console.log(response)
-            context.commit('setQuantumList', response.data.data)
+            context.commit('setQuantumList', response.data)
           })
           .catch(e => {
             // console.log(e)
@@ -153,8 +156,9 @@ export default new Vuex.Store({
       setTimeout(() => {
         axios(config)
           .then(response => {
-            // console.log(response)
-            context.commit('setQuantumList', response.data.data)
+            console.log(response.data)
+            context.commit('setQuantumList', response.data)
+
           })
           .catch(e => {
             // console.log(e)
