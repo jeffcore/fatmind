@@ -6,10 +6,8 @@ import createPersistedState from 'vuex-persistedstate'
 
 Vue.use(Vuex)
 
-// axios.defaults.baseURL = 'http://192.168.25.69:3000/api'
-axios.defaults.baseURL = 'http://localhost:3002/api'
-
-
+axios.defaults.baseURL = 'http://fatmind-api.local:3000/api'
+// axios.defaults.baseURL = 'http://localhost:3002/api'
 
 export default new Vuex.Store({
   plugins: [createPersistedState()],
